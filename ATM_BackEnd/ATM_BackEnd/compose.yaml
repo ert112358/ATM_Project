@@ -1,0 +1,7 @@
+﻿services:
+  atm_backend:
+    image: atm_backend
+    build:
+      context: .
+      dockerfile: ATM_BackEnd/Dockerfile
+
