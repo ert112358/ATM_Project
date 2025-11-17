@@ -77,4 +77,24 @@ app.MapGet("/api/login", (HttpContext context, ATMContext db) =>
 
 });
 
+app.MapGet("/api/viewbalance", (HttpContext context, ATMContext db) =>
+{
+    string token = context.Request.Query["token"].ToString().Replace(" ","+");
+    
+    if (token.IsNullOrEmpty())
+        return Results.BadRequest("Bad request");
+
+    try
+    {
+        User user = db.Users.Single(u => u.Token.Equals(token));
+        context.Response.WriteAsJsonAsync(new { user.Name, user.Balance, user.Transactions });
+        return Results.Ok();
+    }
+    catch (InvalidOperationException)
+    {
+        return Results.BadRequest("Bad request");
+    }
+
+});
+
 app.Run();
