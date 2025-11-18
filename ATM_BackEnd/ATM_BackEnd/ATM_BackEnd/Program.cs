@@ -119,7 +119,7 @@ app.MapGet("/api/withdraw", (HttpContext context, ATMContext db) =>
         return Results.BadRequest("The requested value is too high");
     }
     
-    if (amount < 0)
+    if (amount <= 0)
         return Results.BadRequest("Bad request");
     
     try
@@ -164,7 +164,7 @@ app.MapGet("/api/deposit", (HttpContext context, ATMContext db) =>
         return Results.BadRequest("The requested value is too high");
     }
     
-    if (amount < 0)
+    if (amount <= 0)
         return Results.BadRequest("Bad request");
     
     try
