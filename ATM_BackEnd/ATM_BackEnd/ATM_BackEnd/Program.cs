@@ -101,11 +101,23 @@ app.MapGet("/api/withdraw", (HttpContext context, ATMContext db) =>
 {
     string token = context.Request.Query["token"].ToString().Replace(" ","+");
     string amountString = context.Request.Query["amount"].ToString();
+    int amount;
     
     if (token.IsNullOrEmpty() ||  amountString.IsNullOrEmpty())
         return Results.BadRequest("Bad request");
-    
-    int amount = Int32.Parse(amountString);
+
+    try
+    {
+        amount = Int32.Parse(amountString);
+    }
+    catch (FormatException)
+    {
+        return Results.BadRequest("Bad request");
+    }
+    catch (OverflowException)
+    {
+        return Results.BadRequest("The requested value is too high");
+    }
     
     if (amount < 0)
         return Results.BadRequest("Bad request");
@@ -134,11 +146,23 @@ app.MapGet("/api/deposit", (HttpContext context, ATMContext db) =>
 {
     string token = context.Request.Query["token"].ToString().Replace(" ","+");
     string amountString = context.Request.Query["amount"].ToString();
+    int amount;
     
     if (token.IsNullOrEmpty() ||  amountString.IsNullOrEmpty())
         return Results.BadRequest("Bad request");
-    
-    int amount = Int32.Parse(amountString);
+
+    try
+    {
+        amount = Int32.Parse(amountString);
+    }
+    catch (FormatException)
+    {
+        return Results.BadRequest("Bad request");
+    }
+    catch (OverflowException)
+    {
+        return Results.BadRequest("The requested value is too high");
+    }
     
     if (amount < 0)
         return Results.BadRequest("Bad request");
