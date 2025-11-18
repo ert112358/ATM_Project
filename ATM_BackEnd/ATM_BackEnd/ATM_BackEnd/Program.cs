@@ -73,7 +73,8 @@ app.MapGet("/api/login", (HttpContext context, ATMContext db) =>
         if (result == PasswordVerificationResult.Success)
             return Results.Ok(user.Token);
     }
-    return Results.Ok("Bad username or password");
+
+    return Results.Unauthorized();
 
 });
 
