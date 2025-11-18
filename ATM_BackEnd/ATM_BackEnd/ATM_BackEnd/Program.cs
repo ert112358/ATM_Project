@@ -97,4 +97,34 @@ app.MapGet("/api/viewbalance", (HttpContext context, ATMContext db) =>
 
 });
 
+app.MapGet("/api/withdraw", (HttpContext context, ATMContext db) =>
+{
+    string token = context.Request.Query["token"].ToString().Replace(" ","+");
+    string amountString = context.Request.Query["amount"].ToString();
+    
+    if (token.IsNullOrEmpty() ||  amountString.IsNullOrEmpty())
+        return Results.BadRequest("Bad request");
+    
+    int amount = Int32.Parse(amountString);
+    
+    try
+    {
+        User user = db.Users.Single(u => u.Token.Equals(token));
+        
+        if(user.Balance < amount)
+            return Results.BadRequest("Insufficient balance");
+        
+        user.Balance -= amount;
+        
+        db.Users.Update(user);
+        db.SaveChanges();
+        
+        return Results.Ok();
+    }
+    catch (InvalidOperationException)
+    {
+        return Results.BadRequest("Bad request");
+    }
+});
+
 app.Run();
