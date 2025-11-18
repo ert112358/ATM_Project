@@ -37,7 +37,7 @@ app.MapGet("/api/register", (HttpContext context, ATMContext db) =>
         return Results.BadRequest("Bad request");
     
     if (!Password.IsPasswordStrong(password))
-        return Results.BadRequest("The password doesn't meed the safety criteria");
+        return Results.BadRequest("The password doesn't meet the safety criteria");
     
     if (db.Users.Any(u => u.Name.Equals(username)))
         return Results.BadRequest("Username already taken");
