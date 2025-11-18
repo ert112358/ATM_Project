@@ -107,6 +107,9 @@ app.MapGet("/api/withdraw", (HttpContext context, ATMContext db) =>
     
     int amount = Int32.Parse(amountString);
     
+    if (amount < 0)
+        return Results.BadRequest("Bad request");
+    
     try
     {
         User user = db.Users.Single(u => u.Token.Equals(token));
@@ -136,6 +139,9 @@ app.MapGet("/api/deposit", (HttpContext context, ATMContext db) =>
         return Results.BadRequest("Bad request");
     
     int amount = Int32.Parse(amountString);
+    
+    if (amount < 0)
+        return Results.BadRequest("Bad request");
     
     try
     {
