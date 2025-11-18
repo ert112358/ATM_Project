@@ -127,4 +127,31 @@ app.MapGet("/api/withdraw", (HttpContext context, ATMContext db) =>
     }
 });
 
+app.MapGet("/api/deposit", (HttpContext context, ATMContext db) =>
+{
+    string token = context.Request.Query["token"].ToString().Replace(" ","+");
+    string amountString = context.Request.Query["amount"].ToString();
+    
+    if (token.IsNullOrEmpty() ||  amountString.IsNullOrEmpty())
+        return Results.BadRequest("Bad request");
+    
+    int amount = Int32.Parse(amountString);
+    
+    try
+    {
+        User user = db.Users.Single(u => u.Token.Equals(token));
+        
+        user.Balance += amount;
+        
+        db.Users.Update(user);
+        db.SaveChanges();
+        
+        return Results.Ok(user.Balance);
+    }
+    catch (InvalidOperationException)
+    {
+        return Results.BadRequest("Bad request");
+    }
+});
+
 app.Run();
