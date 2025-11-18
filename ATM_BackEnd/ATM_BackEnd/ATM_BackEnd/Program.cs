@@ -138,7 +138,7 @@ app.MapGet("/api/withdraw", (HttpContext context, ATMContext db) =>
     }
     catch (InvalidOperationException)
     {
-        return Results.BadRequest("Bad request");
+        return Results.Unauthorized();
     }
 });
 
@@ -180,7 +180,7 @@ app.MapGet("/api/deposit", (HttpContext context, ATMContext db) =>
     }
     catch (InvalidOperationException)
     {
-        return Results.BadRequest("Bad request");
+        return Results.Unauthorized();
     }
 });
 
