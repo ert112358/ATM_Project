@@ -119,7 +119,7 @@ app.MapGet("/api/withdraw", (HttpContext context, ATMContext db) =>
         db.Users.Update(user);
         db.SaveChanges();
         
-        return Results.Ok();
+        return Results.Ok(user.Balance);
     }
     catch (InvalidOperationException)
     {
