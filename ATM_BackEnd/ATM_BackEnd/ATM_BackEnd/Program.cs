@@ -63,7 +63,6 @@ app.MapGet("/api/login", (HttpContext context, ATMContext db) =>
     if (password.IsNullOrEmpty())
         return Results.BadRequest("Bad request");
     
-    string hashedPass = hasher.HashPassword(username,  password);
     User? user = db.Users.Find(username);
     
     if (user != null)
