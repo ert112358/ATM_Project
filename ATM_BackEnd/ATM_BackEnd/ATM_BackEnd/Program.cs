@@ -188,4 +188,44 @@ app.MapGet("/api/deposit", (HttpContext context, ATMContext db) =>
     }
 });
 
+app.MapGet("/api/changepassword", (HttpContext context, ATMContext db) =>
+{
+    string username = context.Request.Query["username"].ToString();
+    string oldpassword = context.Request.Query["oldpassword"].ToString();
+    string newpassword = context.Request.Query["newpassword"].ToString();
+
+    if (username.IsNullOrEmpty())
+        return Results.BadRequest("Bad request");
+    if (oldpassword.IsNullOrEmpty())
+        return Results.BadRequest("Bad request");
+    if (newpassword.IsNullOrEmpty())
+        return Results.BadRequest("Bad request");
+    
+    if (!Password.IsPasswordStrong(newpassword))
+        return Results.BadRequest("The password doesn't meet the safety criteria");
+    
+    User? user = db.Users.Find(username);
+    
+    if (user != null)
+    {
+        var result = hasher.VerifyHashedPassword(username, user.Digest, oldpassword);
+
+        if (result == PasswordVerificationResult.Success)
+        {
+            if (oldpassword.Equals(newpassword))
+                return Results.BadRequest("Old password and new password are the same");
+            
+            user.Digest = hasher.HashPassword(username, newpassword);
+            user.Token = System.Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+            
+            db.Users.Update(user);
+            db.SaveChanges();
+            
+            return Results.Ok(user.Token);
+        }
+    }
+
+    return Results.Unauthorized();
+});
+
 app.Run();
