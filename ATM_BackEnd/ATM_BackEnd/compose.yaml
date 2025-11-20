@@ -1,7 +1,21 @@
 ﻿services:
+  atm_database:
+    image: postgres:latest
+    container_name: atm_db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=ATM_DB
+    restart: always
+    ports:
+      - "5432:5432"
+
   atm_backend:
     image: atm_backend
     build:
       context: .
       dockerfile: ATM_BackEnd/Dockerfile
-
+    depends_on:
+      - atm_database
+    ports:
+      - "5001:8080"
