@@ -22,6 +22,12 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ATMContext>();
+    db.Database.Migrate();
+}
+
 PasswordHasher<string> hasher = new PasswordHasher<string>();
 
 app.UseHttpsRedirection();
