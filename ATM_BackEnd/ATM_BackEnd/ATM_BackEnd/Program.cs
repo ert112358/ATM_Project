@@ -140,6 +140,11 @@ app.MapGet("/api/withdraw", (HttpContext context, ATMContext db) =>
             return Results.BadRequest("Insufficient balance");
         
         user.Balance -= amount;
+        user.Transactions.Add(new ATMTransaction{
+            User = user.Name,
+            Type = ATMTransactionType.WITHDRAW,
+            Amount = amount
+        });
         
         db.Users.Update(user);
         db.SaveChanges();
@@ -182,6 +187,11 @@ app.MapGet("/api/deposit", (HttpContext context, ATMContext db) =>
         User user = db.Users.Single(u => u.Token.Equals(token));
         
         user.Balance += amount;
+        user.Transactions.Add(new ATMTransaction{
+            User = user.Name,
+            Type = ATMTransactionType.DEPOSIT,
+            Amount = amount
+        });
         
         db.Users.Update(user);
         db.SaveChanges();
