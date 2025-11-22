@@ -53,8 +53,7 @@ app.MapGet("/api/register", (HttpContext context, ATMContext db) =>
         Name = username,
         Digest = hasher.HashPassword(username, password),
         Token = System.Convert.ToBase64String(RandomNumberGenerator.GetBytes(32)),
-        Balance = 0,
-        Transactions = []
+        Balance = 0
     };
     
     db.Users.Add(user);
@@ -97,8 +96,8 @@ app.MapGet("/api/viewbalance", (HttpContext context, ATMContext db) =>
     try
     {
         User user = db.Users.Single(u => u.Token.Equals(token));
-        context.Response.WriteAsJsonAsync(new { user.Name, user.Balance, user.Transactions });
-        return Results.Ok();
+        var transactions = db.Transactions.Where(t => t.UserName.Equals(user.Name));
+        return Results.Ok(new { user.Name, user.Balance, transactions });
     }
     catch (InvalidOperationException)
     {
@@ -140,13 +139,14 @@ app.MapGet("/api/withdraw", (HttpContext context, ATMContext db) =>
             return Results.BadRequest("Insufficient balance");
         
         user.Balance -= amount;
-        user.Transactions.Add(new ATMTransaction{
-            User = user.Name,
-            Type = ATMTransactionType.WITHDRAW,
-            Amount = amount
+        db.Transactions.Add(new ATMTransaction{
+            Id = Guid.NewGuid(),
+            Type = ATMTransactionType.DEPOSIT,
+            Amount = amount,
+            UserName = user.Name
         });
         
-        db.Users.Update(user);
+        //db.Users.Update(user);
         db.SaveChanges();
         
         return Results.Ok(user.Balance);
@@ -187,13 +187,14 @@ app.MapGet("/api/deposit", (HttpContext context, ATMContext db) =>
         User user = db.Users.Single(u => u.Token.Equals(token));
         
         user.Balance += amount;
-        user.Transactions.Add(new ATMTransaction{
-            User = user.Name,
+        db.Transactions.Add(new ATMTransaction{
+            Id = Guid.NewGuid(),
             Type = ATMTransactionType.DEPOSIT,
-            Amount = amount
+            Amount = amount,
+            UserName = user.Name
         });
         
-        db.Users.Update(user);
+        //db.Users.Update(user);
         db.SaveChanges();
         
         return Results.Ok(user.Balance);
