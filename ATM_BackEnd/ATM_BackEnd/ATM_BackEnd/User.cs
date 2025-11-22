@@ -9,5 +9,4 @@ public class User
     public string Digest { get; set; }
     public string Token { get; set; }
     public decimal Balance { get; set; }
-    public List<ATMTransaction> Transactions { get; set; } = new();
 }
