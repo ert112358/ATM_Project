@@ -141,7 +141,7 @@ app.MapGet("/api/withdraw", (HttpContext context, ATMContext db) =>
         user.Balance -= amount;
         db.Transactions.Add(new ATMTransaction{
             Id = Guid.NewGuid(),
-            Type = ATMTransactionType.DEPOSIT,
+            Type = ATMTransactionType.WITHDRAW,
             Amount = amount,
             UserName = user.Name
         });
