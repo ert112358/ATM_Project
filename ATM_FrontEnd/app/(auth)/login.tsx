@@ -5,6 +5,8 @@ import ParallaxScrollView from "@/components/parallax-scroll-view";
 import { Fonts } from "@/constants/theme";
 import { useState, useEffect } from "react";
 import { Alert } from "react-native";
+import { useRouter } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 
 import {
   View,
@@ -14,7 +16,17 @@ import {
   StyleSheet,
 } from "react-native";
 
+// TODO: make autologin work.
+let autologin = SecureStore.getItem("token") != null;
+// For some reason, this doesn't work:
+// if (autologin) {
+//   console.log("Token is present. Logging in...");
+//   router.replace("/(app)/balance");
+//   return;
+// }
+
 export default function HomeScreen() {
+  const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
@@ -23,6 +35,7 @@ export default function HomeScreen() {
   useEffect(() => {
     // Trigger form validation when name,
     // email, or password changes
+
     validateForm();
   }, [username, password]);
 
@@ -68,7 +81,12 @@ export default function HomeScreen() {
         [{ text: "OK" }],
       );
     } else if (status == 200) {
-      // Password is correct.
+      const token = await loginAPI.json();
+      console.log(token);
+
+      SecureStore.setItem("token", token);
+
+      router.replace("/(app)/balance");
     } else {
       Alert.alert("Error", "An unknown error has occurred. Please try again.", [
         { text: "OK" },
