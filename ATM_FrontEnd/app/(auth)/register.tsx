@@ -68,12 +68,7 @@ export default function HomeScreen() {
         username +
         "&password=" +
         password,
-    ).catch((err) => {
-      Alert.alert(
-        "Error",
-        "Please check your internet connection and try again.",
-      );
-    });
+    );
 
     const status = loginAPI.status;
 
