@@ -67,7 +67,7 @@ export default function DepositScreen() {
       setBalance(newBalance.balance ?? newBalance);
       setAmount("");
 
-      Alert.alert("Success", `You withdrew ${value}€`);
+      Alert.alert("Success", `You deposited ${value}€`);
     } catch (err) {
       console.error(err);
       Alert.alert("Error", "Failed to contact server.");
